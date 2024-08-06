@@ -27,6 +27,23 @@ app.post('/user', async (req, res) => {
   }
 })
 
+app.post('/login', async (req, res) => {
+  try {
+    const email = req.body.email;
+    const password = req.body.password;
+
+    const user = await User.findOne({ where: { email, password } })
+    if (user) {
+      const userWithouPassword = user.toJSON()
+      delete userWithouPassword.password
+      res.status(200).json({ user: userWithouPassword })
+    } else {
+      res.status(401).json({ error: 'Usuário não encontrado' })
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
 
 sequelize.sync().then(() => {
   // Rodar o servidor para ficar escutando as chamadas ao endpoint
