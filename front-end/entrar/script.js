@@ -8,7 +8,7 @@ const doLogin = async (userData) => {
       body: JSON.stringify(userData)
     }).then(res => res.json())
 
-    return userLogged;
+    return userLogged.user;
   } catch (error) {
     console.error(error)
   }
@@ -32,7 +32,7 @@ loginButton.addEventListener('click', async () => {
   // Enviar os dados para a api;
   const userData = { email, password };
   const user = await doLogin(userData);
-
+  console.log(user)
   if (user) {
     loginSuccessAlert.className += 'flex';
     localStorage.setItem("user", JSON.stringify(user))

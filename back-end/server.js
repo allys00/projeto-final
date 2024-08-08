@@ -2,6 +2,7 @@ const express = require("express");
 const sequelize = require("./db");
 const cors = require('cors');
 const User = require("./model/User");
+const Event = require("./model/Events");
 
 const corsOptions = {
   origin: "*",
@@ -40,6 +41,47 @@ app.post('/login', async (req, res) => {
     } else {
       res.status(401).json({ error: 'Usuário não encontrado' })
     }
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// Endpoint Eventos
+
+app.post('/events', async (req, res) => {
+  try {
+    const event = await Event.create(req.body)
+    res.status(201).json(event)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+app.get('/events/:userId', async (req, res) => {
+  try {
+    const events = await Event.findAll({ where: { userId: req.params.userId } })
+    res.status(200).json(events)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+
+app.delete('/events/:eventId', async (req, res) => {
+  try {
+    const event = await Event.findOne({ where: { id: req.params.eventId } })
+    event.destroy();
+    res.status(204).json({ ok: 'ok' })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+app.patch('/events/:eventId', async (req, res) => {
+  try {
+    const event = await Event.findOne({ where: { id: req.params.eventId } })
+    event.update(req.body);
+    res.status(200).json(event)
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
